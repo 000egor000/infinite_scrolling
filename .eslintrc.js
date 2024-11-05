@@ -1,18 +1,14 @@
-module.exports = {
+export default {
   env: {
     browser: true,
-    es2021: true,
+    node: true,
   },
-  extends: ["eslint:recommended", "plugin:react/recommended"],
+  globals: {
+    myCustomGlobal: "readonly",
+  },
   parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 12,
+    ecmaVersion: 2022,
     sourceType: "module",
   },
-  plugins: ["react"],
-  rules: {
-    //  правила
-  },
+  rules: {},
 };
