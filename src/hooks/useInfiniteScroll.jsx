@@ -1,30 +1,37 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
- * Adds an event listener to the window that listens for a scroll event. When
- * the user reaches the bottom of the page, it calls the setPage function to
- * fetch the next page of data. The event listener is cleaned up with
- * useEffect's cleanup function.
+ * Custom React hook to implement infinite scrolling.
  *
- * @param {boolean} loading - Whether the data is currently loading.
- * @param {function} setPage - Function to call when the user reaches the
- * bottom of the page. Should update the page state.
+ * This hook utilizes the Intersection Observer API to determine when the
+ * observed element (typically the last item in a list) becomes visible 
+ * in the viewport. When the element is visible and the loading state is false, 
+ * it triggers the `setPage` function to increment the page number for data fetching.
+ *
+ * @param {boolean} loading - A boolean indicating whether data is currently being loaded.
+ * @param {function} setPage - A function to update the current page number.
+ * @returns {object} - A ref object to be attached to the element to be observed.
  */
 export const useInfiniteScroll = (loading, setPage) => {
-  useEffect(() => {
-    const handleScroll = () => {
-      const isBottom =
-        window.innerHeight + window.scrollY >= document.body.offsetHeight;
+  const observerRef = useRef();
 
-      if (isBottom && !loading) {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !loading) {
         setPage((prev) => prev + 1);
       }
-    };
+    });
 
-    window.addEventListener("scroll", handleScroll);
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
     };
   }, [loading, setPage]);
+
+  return observerRef;
 };

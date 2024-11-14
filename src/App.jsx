@@ -3,28 +3,28 @@ import CardItemList from "./components/CardItemList";
 import { useFetchItems, useInfiniteScroll } from "./hooks";
 
 /**
- * The main App component.
+ * Main application component.
  *
- * It manages the current page and fetching of the items.
- * It uses the `useFetchItems` hook to fetch the items and the `useInfiniteScroll`
- * hook to handle the infinite scrolling.
+ * @returns {ReactElement} - The main application component
  *
- * It renders the `CardItemList` component with the state object.
+ * The component renders a list of items in cards with infinite scrolling.
+ * It uses the `useFetchItems` and `useInfiniteScroll` hooks to fetch data
+ * and handle the infinite scroll.
  *
- * The state object contains the current page, items and the loading flag.
- *
- * @returns {JSX.Element} The rendered App component.
+ * The component also uses the `useMemo` hook to memoize the component's state,
+ * which is then passed to the `CardItemList` component.
  */
 const App = () => {
   const [page, setPage] = useState(1);
   const { items, loading } = useFetchItems(page);
-  useInfiniteScroll(loading, setPage);
+  const observerRef = useInfiniteScroll(loading, setPage);
 
   const state = useMemo(
     () => ({
       items,
       page,
       loading,
+      observerRef,
     }),
     [items, page, loading]
   );

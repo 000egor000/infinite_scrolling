@@ -7,22 +7,31 @@ const staticTitles = {
 };
 
 /**
- * Component for rendering a list of items in cards with infinite scrolling.
+ * CardItemList component renders a list of items with infinite scrolling support.
  *
- * @prop {Object} state - state object with items and loading properties.
- * @prop {Array.<Object>} state.items - array of items to render.
- * @prop {boolean} state.loading - whether the component is currently loading.
+ * It displays a main title, a list of user items, and status messages based on the loading state.
+ * Each item in the list includes a user's image, full name, and email address.
+ * If items are available, it maps over them and renders a list item for each.
+ * If no items are available and not loading, it shows a "No Data" message.
+ * When loading, it shows a loading message.
  *
- * @returns {ReactElement} - element with list of cards and loading message.
+ * @param {object} state - The state object containing items, loading status, and observer reference.
+ * @param {array} state.items - An array of user objects to display.
+ * @param {boolean} state.loading - A boolean indicating if data is currently being fetched.
+ * @param {object} state.observerRef - A ref object for the last list item to enable infinite scrolling.
+ * @returns {JSX.Element} The rendered list of items with status messages.
  */
-const CardItemList = ({ state: { items, loading } }) => {
+const CardItemList = ({ state: { items, loading, observerRef } }) => {
   return (
     <>
       <h1>{staticTitles.mainTitle}</h1>
       <ul>
         {items?.length > 0
           ? items.map((item) => (
-              <li key={`${item.id}-${item.name.first}-${item.name.last}`}>
+              <li
+                key={`${item.id}-${item.name.first}-${item.name.last}`}
+                ref={observerRef}
+              >
                 <img
                   src={item.picture.large}
                   alt={`${item.name.first} ${item.name.last}`}
